@@ -486,7 +486,7 @@ const Drill3DPathPage = () => {
     [-4.8, 3.2, -1.2],
   ]);
 
-  const [username, setUsername] = useState("Navin Kumar");
+  const [username, setUsername] = useState("ADMIN");
   const initials = useMemo(() => username.split(" ").map((s) => s[0]).join(""), [username]);
    // --- state (put near your other useState hooks) ---
 const [eventsLeft, setEventsLeft] = useState([
@@ -624,6 +624,7 @@ const [eventsLeft, setEventsLeft] = useState([
 };
 
 export default Drill3DPathPage;
+
 
 
 
