@@ -1,10 +1,12 @@
 import React, { useMemo, useState } from "react";
+import { NavLink } from "react-router-dom";
 
 // DrillSense Dashboard – per-section useState (no Context) + memoized children
 // Goal: if only Hole Quality updates, only that card re-renders.
 // - Each section owns its own state via useState in the parent
 // - Children are React.memo so unchanged props skip re-render
 // - Hardcoded initial data; replace set* calls with your backend updates
+
 
 const DrillSenseDashboard = () => {
   // Header
@@ -59,14 +61,62 @@ const DrillSenseDashboard = () => {
   return (
     <div className="min-h-screen w-full bg-gradient-to-br from-[#0a0f1e] via-[#0b1224] to-[#0a0f1e] text-zinc-100">
       {/* Header */}
-      <header className="sticky top-0 z-10 border-b border-white/10 bg-[#0b1326]/80 backdrop-blur supports-[backdrop-filter]:bg-[#0b1326]/60">
+      {/* <header className="sticky top-0 z-10 border-b border-white/10 bg-[#0b1326]/80 backdrop-blur supports-[backdrop-filter]:bg-[#0b1326]/60">
         <div className="w-full mx-auto max-w-none 2xl:max-w-[1600px] px-4 py-4 2xl:px-8">
           <div className="flex items-center justify-between">
             <h1 className="text-xl md:text-2xl font-semibold tracking-tight">DrillSense</h1>
             <HeaderUser username={username} initials={initials} />
           </div>
         </div>
-      </header>
+      </header> */}
+      {/* <header className="sticky top-0 z-10 border-b border-white/10 bg-[#0b1326]/80 backdrop-blur supports-[backdrop-filter]:bg-[#0b1326]/60">
+  <div className="w-full mx-auto max-w-none 2xl:max-w-[1600px] px-4 py-3 2xl:px-8">
+    <div className="flex items-center justify-between gap-4">
+      {/* Brand + Nav */}
+     {/* <div className="flex items-center gap-6">
+        <h1 className="text-xl md:text-2xl font-semibold tracking-tight">DrillSense</h1>
+        <nav className="hidden md:flex items-center gap-1 rounded-lg bg-white/5 p-1">
+          <NavItem to="/">Dashboard</NavItem>
+          <NavItem to="/3d-path">3D Path</NavItem>
+        </nav>
+      </div>
+
+      {/* User */}
+     {/* <HeaderUser username={username} initials={initials} />
+    </div>
+
+    {/* Mobile nav */}
+   {/*} <nav className="mt-2 flex gap-2 md:hidden">
+      <NavItem to="/">Dashboard</NavItem>
+      <NavItem to="/3d-path">3D Path</NavItem>
+    </nav>
+  </div>
+</header> */}
+        <header className="sticky top-0 z-10 border-b border-white/10 bg-[#0b1326]/80 backdrop-blur supports-[backdrop-filter]:bg-[#0b1326]/60">
+  <div className="w-full mx-auto max-w-none 2xl:max-w-[1600px] px-4 py-3 2xl:px-8">
+    <div className="flex items-center justify-between gap-4">
+      {/* brand left */}
+      <h1 className="text-xl md:text-2xl font-semibold tracking-tight">DrillSense</h1>
+
+      {/* nav + user on the right */}
+      <div className="flex items-center gap-3">
+        <nav className="hidden sm:flex items-center gap-1 rounded-full bg-white/5 p-1 shadow-inner shadow-black/20">
+          <NavItemRight to="/" icon={<IconGrid/>}>Dashboard</NavItemRight>
+          <NavItemRight to="/dashboard" icon={<IconPath/>}>3D Path</NavItemRight>
+        </nav>
+        <HeaderUser username={username} initials={initials} />
+      </div>
+    </div>
+
+    {/* mobile nav (drops under header) */}
+    <nav className="mt-2 flex gap-2 sm:hidden">
+      <NavItemRight to="/" icon={<IconGrid/>}>Dashboard</NavItemRight>
+      <NavItemRight to="/dashboard" icon={<IconPath/>}>3D Path</NavItemRight>
+    </nav>
+  </div>
+</header>
+
+
 
       {/* Main */}
       <main className="w-full mx-auto max-w-none 2xl:max-w-[1600px] px-6 py-4 2xl:px-8">
@@ -352,6 +402,52 @@ const BarChart = React.memo(function BarChart({ values, labels, yDomain = [0, 2.
     </div>
   );
 });
+
+const NavItem = ({ to, children }) => (
+  <NavLink
+    to={to}
+    className={({ isActive }) =>
+      `px-3 py-1.5 text-sm rounded-md transition
+       ${isActive ? "bg-sky-500/20 text-sky-300" : "text-zinc-300 hover:bg-white/10"}`
+    }
+  >
+    {children}
+  </NavLink>
+);
+
+const IconGrid = () => (
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" className="shrink-0">
+    <rect x="3" y="3" width="7" height="7" rx="2" stroke="currentColor" strokeWidth="1.6"/>
+    <rect x="14" y="3" width="7" height="7" rx="2" stroke="currentColor" strokeWidth="1.6"/>
+    <rect x="3" y="14" width="7" height="7" rx="2" stroke="currentColor" strokeWidth="1.6"/>
+    <rect x="14" y="14" width="7" height="7" rx="2" stroke="currentColor" strokeWidth="1.6"/>
+  </svg>
+);
+
+const IconPath = () => (
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" className="shrink-0">
+    <path d="M4 20c3-8 13-4 16-12" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round"/>
+    <circle cx="4" cy="20" r="2" fill="currentColor"/>
+    <circle cx="20" cy="8" r="2" fill="currentColor"/>
+  </svg>
+);
+
+const NavItemRight = ({ to, icon, children }) => (
+  <NavLink
+    to={to}
+    className={({ isActive }) =>
+      [
+        "inline-flex items-center gap-2 rounded-full px-3 py-1.5 text-sm transition",
+        "hover:bg-white/10 hover:text-white",
+        isActive ? "bg-sky-500/20 text-sky-300 ring-1 ring-sky-500/30 shadow-[0_0_0_3px_rgba(56,189,248,0.08)]" : "text-zinc-300"
+      ].join(" ")
+    }
+  >
+    {icon} {children}
+  </NavLink>
+);
+
+
 
 export default DrillSenseDashboard;
 

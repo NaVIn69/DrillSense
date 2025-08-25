@@ -2,6 +2,8 @@
 import React, { useMemo, useState } from "react";
 import { Canvas } from "@react-three/fiber";
 import { OrbitControls, Line, Html } from "@react-three/drei";
+import { NavLink } from "react-router-dom";
+
 
 /* --- compact Card --- */
 const Card = ({ title, className = "", children }) => (
@@ -16,6 +18,20 @@ const Card = ({ title, className = "", children }) => (
     {children}
   </section>
 );
+
+const HeaderUser = React.memo(function HeaderUser({ username, initials }) {
+  return (
+    <div className="flex items-center gap-3">
+      <div className="grid size-9 place-items-center rounded-full bg-gradient-to-br from-zinc-700 to-zinc-600 font-semibold">
+        {initials}
+      </div>
+      <div className="text-sm leading-tight">
+        <div className="font-medium">{username}</div>
+        {/* <div className="text-zinc-400">Logged in</div> */}
+      </div>
+    </div>
+  );
+});
 
 /* --- tiny Chip for verdicts --- */
 const Chip = ({ tone = "zinc", children }) => {
@@ -54,58 +70,17 @@ const Chip = ({ tone = "zinc", children }) => {
     </div>
   );
   
-
-/* --- deviation side panel --- */
-// const DeviationSidePanel = React.memo(function DeviationSidePanel({
-//   lateralInstant,
-//   lateralCumulative,
-//   angularDeg,
-//   dls,
-//   correction,
-// }) {
-//   const maxLateral = 30,
-//     maxAngular = 10;
-//   const lateralPct = Math.min(100, (lateralInstant / maxLateral) * 100);
-//   const angularPct = Math.min(100, (angularDeg / maxAngular) * 100);
-//   return (
-//     <div className="grid gap-3">
-//       <div>
-//         <div className="text-[10px] text-zinc-400">Lateral Deviation</div>
-//         <div className="mt-0.5 flex items-baseline gap-2">
-//           <div className="text-3xl font-semibold">{lateralInstant}</div>
-//           <div className="text-xs text-zinc-400">cm</div>
-//         </div>
-//         <div className="mt-1 h-1.5 w-full overflow-hidden rounded-full bg-zinc-800">
-//           <div className="h-full bg-sky-500" style={{ width: `${lateralPct}%` }} />
-//         </div>
-//         <div className="mt-1 text-[10px] text-zinc-400">
-//           Cumulative: {lateralCumulative} cm/m
-//         </div>
-//       </div>
-
-//       <div>
-//         <div className="text-[10px] text-zinc-400">Angular Deviation</div>
-//         <div className="mt-0.5 text-3xl font-semibold">
-//           {angularDeg}
-//           <span className="ml-0.5 text-xs align-top">°</span>
-//         </div>
-//         <div className="mt-1 h-1.5 w-full overflow-hidden rounded-full bg-zinc-800">
-//           <div className="h-full bg-rose-500" style={{ width: `${angularPct}%` }} />
-//         </div>
-//       </div>
-
-//       <div>
-//         <div className="text-[10px] text-zinc-400">Dogleg severity (DLS)</div>
-//         <div className="-mt-0.5 text-sm text-zinc-200">{dls}</div>
-//       </div>
-
-//       <div>
-//         <div className="text-[10px] text-zinc-400">Predicted correction required</div>
-//         <div className="-mt-0.5 text-sm text-zinc-200">{correction}</div>
-//       </div>
-//     </div>
-//   );
-// });
+  const NavItem = ({ to, children }) => (
+    <NavLink
+      to={to}
+      className={({ isActive }) =>
+        `px-3 py-1.5 text-sm rounded-md transition
+         ${isActive ? "bg-sky-500/20 text-sky-300" : "text-zinc-300 hover:bg-white/10"}`
+      }
+    >
+      {children}
+    </NavLink>
+  ); 
 
 
 /* --- deviation side panel (improved UI) --- */
@@ -330,36 +305,7 @@ const ThreeDPathCanvasTopDown = React.memo(function ThreeDPathCanvasTopDown({
   );
 });
 
-// /* --- tiny sparkline --- */
-// const Sparkline = React.memo(function Sparkline({ values = [] }) {
-//   const w = 520,
-//     h = 120,
-//     m = { l: 28, r: 8, t: 8, b: 20 };
-//   const W = w - m.l - m.r,
-//     H = h - m.t - m.b;
-//   const x = (i) => m.l + (i / Math.max(1, values.length - 1)) * W;
-//   const min = 0,
-//     max = 2.5,
-//     y = (v) => m.t + (1 - (v - min) / (max - min)) * H;
-//   const pts = values.map((v, i) => `${x(i)},${y(v)}`).join(" ");
-//   return (
-//     <div className="relative w-full aspect-[16/9] overflow-hidden rounded-lg border border-zinc-800 bg-zinc-900">
-//       <svg viewBox={`0 0 ${w} ${h}`} className="h-full w-full">
-//         <line x1={m.l} y1={m.t} x2={m.l} y2={h - m.b} stroke="#475569" />
-//         <line x1={m.l} y1={h - m.b} x2={w - m.r} y2={h - m.b} stroke="#475569" />
-//         {[0, 0.5, 1, 1.5, 2, 2.5].map((t) => (
-//           <g key={t}>
-//             <line x1={m.l} x2={w - m.r} y1={y(t)} y2={y(t)} stroke="#27272a" />
-//             <text x={m.l - 6} y={y(t) + 3} textAnchor="end" fontSize="10" fill="#9ca3af">
-//               {t}
-//             </text>
-//           </g>
-//         ))}
-//         <polyline points={pts} fill="none" stroke="#facc15" strokeWidth="2" />
-//       </svg>
-//     </div>
-//   );
-// });
+
 /* --- Sparkline with X & Y axes --- */
 const Sparkline = React.memo(function Sparkline({ values = [] }) {
     const w = 520, h = 120, m = { l: 28, r: 20, t: 10, b: 22 };
@@ -401,42 +347,6 @@ const Sparkline = React.memo(function Sparkline({ values = [] }) {
       </div>
     );
   });
-  
-
-// --- components ---
-// const EventLogBullets = React.memo(function EventLogBullets({ items = [] }) {
-//     return (
-//       <ul className="space-y-3 text-sm">
-//         {items.map((e, i) => (
-//           <li key={i} className="flex items-start gap-3">
-//             <span className="mt-1 size-3 rounded-full" style={{ background: e.color }} />
-//             <div>
-//               <div className="text-zinc-200">{e.text}</div>
-//               <div className="text-xs text-zinc-400">{e.depth}</div>
-//             </div>
-//           </li>
-//         ))}
-//       </ul>
-//     );
-//   });
-  
-//   const EventLogTimeline = React.memo(function EventLogTimeline({ items = [] }) {
-//     return (
-//       <ul className="space-y-3 text-sm">
-//         {items.map((e, i) => (
-//           <li key={i} className="flex items-start gap-3">
-//             <div className="w-12 shrink-0 text-zinc-400">{e.time}</div>
-//             <div className="flex-1">
-//               <div className="text-zinc-200">{e.text}</div>
-//               {e.depth && e.depth !== "—" && (
-//                 <div className="text-xs text-zinc-400">{e.depth}</div>
-//               )}
-//             </div>
-//           </li>
-//         ))}
-//       </ul>
-//     );
-//   });
 
 // utils
 const hexToRgba = (hex, a = 1) => {
@@ -523,6 +433,39 @@ const hexToRgba = (hex, a = 1) => {
       </div>
     );
   });
+
+  const IconGrid = () => (
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" className="shrink-0">
+      <rect x="3" y="3" width="7" height="7" rx="2" stroke="currentColor" strokeWidth="1.6"/>
+      <rect x="14" y="3" width="7" height="7" rx="2" stroke="currentColor" strokeWidth="1.6"/>
+      <rect x="3" y="14" width="7" height="7" rx="2" stroke="currentColor" strokeWidth="1.6"/>
+      <rect x="14" y="14" width="7" height="7" rx="2" stroke="currentColor" strokeWidth="1.6"/>
+    </svg>
+  );
+  
+  const IconPath = () => (
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" className="shrink-0">
+      <path d="M4 20c3-8 13-4 16-12" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round"/>
+      <circle cx="4" cy="20" r="2" fill="currentColor"/>
+      <circle cx="20" cy="8" r="2" fill="currentColor"/>
+    </svg>
+  );
+  
+  const NavItemRight = ({ to, icon, children }) => (
+    <NavLink
+      to={to}
+      className={({ isActive }) =>
+        [
+          "inline-flex items-center gap-2 rounded-full px-3 py-1.5 text-sm transition",
+          "hover:bg-white/10 hover:text-white",
+          isActive ? "bg-sky-500/20 text-sky-300 ring-1 ring-sky-500/30 shadow-[0_0_0_3px_rgba(56,189,248,0.08)]" : "text-zinc-300"
+        ].join(" ")
+      }
+    >
+      {icon} {children}
+    </NavLink>
+  );
+  
   
   
 
@@ -542,6 +485,9 @@ const Drill3DPathPage = () => {
     [-3.6, 2.4, -0.6],
     [-4.8, 3.2, -1.2],
   ]);
+
+  const [username, setUsername] = useState("Navin Kumar");
+  const initials = useMemo(() => username.split(" ").map((s) => s[0]).join(""), [username]);
    // --- state (put near your other useState hooks) ---
 const [eventsLeft, setEventsLeft] = useState([
     { color: "#ef4444", text: "Hole deviation", depth: "125m" },
@@ -571,8 +517,33 @@ const [eventsLeft, setEventsLeft] = useState([
 
   return (
     <div className="min-h-screen w-full bg-gradient-to-br from-[#0a0f1e] via-[#0b1224] to-[#0a0f1e] text-zinc-100">
+        <header className="sticky top-0 z-10 border-b border-white/10 bg-[#0b1326]/80 backdrop-blur supports-[backdrop-filter]:bg-[#0b1326]/60">
+  <div className="w-full mx-auto max-w-none 2xl:max-w-[1600px] px-4 py-3 2xl:px-8">
+    <div className="flex items-center justify-between gap-4">
+      {/* brand left */}
+      <h1 className="text-xl md:text-2xl font-semibold tracking-tight">DrillSense</h1>
+
+      {/* nav + user on the right */}
+      <div className="flex items-center gap-3">
+        <nav className="hidden sm:flex items-center gap-1 rounded-full bg-white/5 p-1 shadow-inner shadow-black/20">
+          <NavItemRight to="/" icon={<IconGrid/>}>Dashboard</NavItemRight>
+          <NavItemRight to="/dashboard" icon={<IconPath/>}>3D Path</NavItemRight>
+        </nav>
+        <HeaderUser username={username} initials={initials} />
+      </div>
+    </div>
+
+    {/* mobile nav (drops under header) */}
+    <nav className="mt-2 flex gap-2 sm:hidden">
+      <NavItemRight to="/" icon={<IconGrid/>}>Dashboard</NavItemRight>
+      <NavItemRight to="/dashboard" icon={<IconPath/>}>3D Path</NavItemRight>
+    </nav>
+  </div>
+</header>
+
+
       <div className="mx-auto w-full max-w-none px-3 py-4 sm:px-4 sm:py-5 2xl:max-w-[1600px] 2xl:px-8">
-        <h1 className="mb-2 text-lg font-semibold tracking-tight text-zinc-200">3D Path</h1>
+        {/* <h1 className="mb-2 text-lg font-semibold tracking-tight text-zinc-200">3D Path</h1> */}
 
         {/* Top row (same structure): Path view (left, wider) + Deviation (right) */}
         <div className="grid grid-cols-1 gap-2 sm:gap-3 md:grid-cols-2 xl:grid-cols-3 auto-rows-fr">
