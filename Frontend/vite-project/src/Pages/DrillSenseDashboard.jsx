@@ -10,7 +10,7 @@ import { NavLink } from "react-router-dom";
 
 const DrillSenseDashboard = () => {
   // Header
-  const [username, setUsername] = useState("Navin Kumar");
+  const [username, setUsername] = useState("ADMIN");
 
   // Depth KPI
   const [depthMeters, setDepthMeters] = useState(2430);
@@ -450,4 +450,5 @@ const NavItemRight = ({ to, icon, children }) => (
 
 
 export default DrillSenseDashboard;
+
 
